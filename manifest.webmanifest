@@ -1,0 +1,17 @@
+{
+  "name": "Restauradas para Restaurar",
+  "short_name": "Restauradas",
+  "description": "App del Encuentro de Mujeres Restauradas para Restaurar 2027",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FBF6F5",
+  "theme_color": "#893941",
+  "lang": "es-CO",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
