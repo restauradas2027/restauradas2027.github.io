@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Restauradas para Restaurar</title>
+<meta name="description" content="App del Encuentro de Mujeres Restauradas para Restaurar 2027">
+<meta name="theme-color" content="#893941">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Restauradas">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<style>
+  html, body { margin: 0; height: 100%; background: #FBF6F5; overflow: hidden; }
+  body { padding: env(safe-area-inset-top) 0 0 0; box-sizing: border-box; }
+  #app { position: fixed; inset: env(safe-area-inset-top) 0 0 0; width: 100%; height: calc(100% - env(safe-area-inset-top)); border: 0; opacity: 0; transition: opacity .4s; }
+  #app.listo { opacity: 1; }
+  #portada { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+    font-family: Georgia, "Times New Roman", serif; color: #893941; text-align: center; transition: opacity .4s; }
+  #portada img { width: 120px; height: 120px; border-radius: 28px; box-shadow: 0 8px 24px rgba(137,57,65,.18); }
+  #portada h1 { font-size: 22px; margin: 6px 0 0; font-weight: 600; }
+  #portada p { margin: 0; font: 14px/1.4 -apple-system, "Segoe UI", Roboto, sans-serif; color: #7A6265; }
+  #portada a { margin-top: 18px; font: 13px -apple-system, "Segoe UI", Roboto, sans-serif; color: #893941; display: none; }
+  .puntos span { display: inline-block; width: 7px; height: 7px; margin: 0 3px; border-radius: 50%; background: #CB7885; animation: p 1.2s infinite; }
+  .puntos span:nth-child(2) { animation-delay: .2s } .puntos span:nth-child(3) { animation-delay: .4s }
+  @keyframes p { 0%, 80%, 100% { opacity: .25 } 40% { opacity: 1 } }
+</style>
+</head>
+<body>
+<div id="portada">
+  <img src="icon-180.png" alt="">
+  <h1>Restauradas para Restaurar</h1>
+  <p>Encuentro 2027 · Isaías 44:26</p>
+  <div class="puntos"><span></span><span></span><span></span></div>
+  <a id="abrir" target="_blank" rel="noopener">¿No carga? Toca aquí para abrirla</a>
+</div>
+<iframe id="app" title="Restauradas para Restaurar" allow="clipboard-write; camera; microphone; geolocation"></iframe>
+<script>
+  // Link de la app (implementación de Apps Script). Si algún día cambia, solo se cambia aquí.
+  var APP = 'https://script.google.com/macros/s/AKfycbzJQG85RGv1OC1RbCipv_sKfvAe1ILsUDkVCA84RBGW2-VRpPcMXH57XnfQgUg9nEl4dQ/exec';
+  var f = document.getElementById('app'), portada = document.getElementById('portada'), abrir = document.getElementById('abrir');
+  abrir.href = APP;
+  f.addEventListener('load', function () { f.classList.add('listo'); portada.style.opacity = 0; setTimeout(function () { portada.style.display = 'none'; }, 450); });
+  f.src = APP;
+  setTimeout(function () { if (!f.classList.contains('listo')) abrir.style.display = 'block'; }, 12000);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+</script>
+</body>
+</html>
