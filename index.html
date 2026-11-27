@@ -43,9 +43,40 @@
   var APP = 'https://script.google.com/macros/s/AKfycbzJQG85RGv1OC1RbCipv_sKfvAe1ILsUDkVCA84RBGW2-VRpPcMXH57XnfQgUg9nEl4dQ/exec';
   var f = document.getElementById('app'), portada = document.getElementById('portada'), abrir = document.getElementById('abrir');
   abrir.href = APP;
-  f.addEventListener('load', function () { f.classList.add('listo'); portada.style.opacity = 0; setTimeout(function () { portada.style.display = 'none'; }, 450); });
-  f.src = APP;
-  setTimeout(function () { if (!f.classList.contains('listo')) abrir.style.display = 'block'; }, 12000);
+
+  // Reemplazo de google.script.run: habla con la app sin usar la sesión de Google del celular
+  // (evita el error "unable to open the file" cuando hay varias cuentas de Gmail abiertas).
+  var PUENTE = '<scr' + 'ipt>(function(){var APP=' + JSON.stringify(APP) + ';' +
+    'function runner(ok,ko){return new Proxy({},{get:function(_,k){' +
+    'if(k==="withSuccessHandler")return function(fn){return runner(fn,ko)};' +
+    'if(k==="withFailureHandler")return function(fn){return runner(ok,fn)};' +
+    'if(k==="withUserObject")return function(){return runner(ok,ko)};' +
+    'return function(){var args=[].slice.call(arguments);' +
+    'fetch(APP,{method:"POST",credentials:"omit",redirect:"follow",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({fn:k,args:args})})' +
+    '.then(function(r){return r.json()}).then(function(j){if(j.ok){ok&&ok(j.r)}else{ko&&ko(new Error(j.error))}})' +
+    '.catch(function(e){ko&&ko(e)})}}})}' +
+    'window.google={script:{run:runner(null,null)}};})();</scr' + 'ipt>';
+
+  function respaldo() { // si algo falla, se usa la forma anterior (la app dentro de un marco)
+    f.addEventListener('load', function () { f.classList.add('listo'); portada.style.opacity = 0; setTimeout(function () { portada.style.display = 'none'; }, 450); });
+    f.src = APP;
+    setTimeout(function () { if (!f.classList.contains('listo')) abrir.style.display = 'block'; }, 12000);
+  }
+
+  fetch(APP + '?raw=1', { credentials: 'omit', redirect: 'follow' })
+    .then(function (r) { return r.text(); })
+    .then(function (html) {
+      if (html.indexOf('<base target') < 0 || html.indexOf('google.script.run') < 0) throw new Error('sin diseño');
+      html = html.replace(/<head>/i, '<head>' + PUENTE +
+        '<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png">' +
+        '<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">' +
+        '<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">' +
+        '<meta name="apple-mobile-web-app-title" content="Restauradas"><meta name="theme-color" content="#893941">' +
+        '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Restauradas para Restaurar</title>');
+      document.open(); document.write(html); document.close();
+    })
+    .catch(respaldo);
+
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
 </script>
 </body>
